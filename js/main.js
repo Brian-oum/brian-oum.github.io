@@ -1,32 +1,28 @@
-
 // ================= MOBILE MENU =================
 const mobileMenu = document.querySelector('.mobile-menu');
 const navUl = document.querySelector('nav ul');
 
 mobileMenu.addEventListener('click', () => {
   navUl.classList.toggle('active');
-  mobileMenu.innerHTML = navUl.classList.contains('active') ?
-    '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+  mobileMenu.innerHTML = navUl.classList.contains('active')
+    ? '<i class="fas fa-times"></i>'
+    : '<i class="fas fa-bars"></i>';
 });
 
-// ================= DROPDOWN FUNCTIONALITY (FIXED) =================
+// ================= DROPDOWN FUNCTIONALITY =================
 const dropdowns = document.querySelectorAll('.dropdown');
 
 function setupDropdowns() {
   dropdowns.forEach(dropdown => {
     const link = dropdown.querySelector('a:first-child');
-
-    // Remove old listeners (prevents double binding)
     const newLink = link.cloneNode(true);
     link.parentNode.replaceChild(newLink, link);
 
     if (window.innerWidth > 768) {
-      // Desktop hover behavior
       dropdown.addEventListener('mouseenter', () => dropdown.classList.add('active'));
       dropdown.addEventListener('mouseleave', () => dropdown.classList.remove('active'));
     } else {
-      // Mobile click behavior
-      newLink.addEventListener('click', (e) => {
+      newLink.addEventListener('click', e => {
         e.preventDefault();
         dropdown.classList.toggle('active');
       });
@@ -34,16 +30,11 @@ function setupDropdowns() {
   });
 }
 
-// Initialize dropdowns
 setupDropdowns();
+window.addEventListener('resize', setupDropdowns);
 
-// Re-run setup on resize (for responsiveness)
-window.addEventListener('resize', () => {
-  setupDropdowns();
-});
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', (e) => {
+// ================= CLOSE DROPDOWNS WHEN CLICKING OUTSIDE =================
+document.addEventListener('click', e => {
   if (!e.target.closest('.dropdown')) {
     dropdowns.forEach(dropdown => dropdown.classList.remove('active'));
   }
@@ -53,7 +44,6 @@ document.addEventListener('click', (e) => {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     e.preventDefault();
-
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
       window.scrollTo({
@@ -61,8 +51,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         behavior: 'smooth'
       });
     }
-
-    // Close mobile menu if open
     if (navUl.classList.contains('active')) {
       navUl.classList.remove('active');
       mobileMenu.innerHTML = '<i class="fas fa-bars"></i>';
@@ -72,22 +60,20 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ================= INTERSECTION OBSERVER =================
 const fadeElements = document.querySelectorAll('.fade-in');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('animate');
-    }
-  });
-}, { threshold: 0.1 });
-
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('animate');
+    });
+  },
+  { threshold: 0.1 }
+);
 fadeElements.forEach(el => observer.observe(el));
 
 // ================= TYPING ANIMATION =================
 function initTypingAnimation() {
   const heading = document.querySelector('.services-text h2');
   if (!heading) return;
-
   const text = heading.textContent;
   const paragraph = document.querySelector('.services-text p');
 
@@ -115,11 +101,9 @@ function initTypingAnimation() {
 function handleResponsive() {
   const container = document.querySelector('.services-container');
   const grid = document.querySelector('.services-grid');
-
   if (!container || !grid) return;
 
-  const width = window.innerWidth;
-  if (width <= 768) {
+  if (window.innerWidth <= 768) {
     container.style.flexDirection = 'column';
     grid.style.gridTemplateColumns = '1fr';
   } else {
@@ -135,7 +119,6 @@ function initResponsiveBackground() {
 
   function updateBackground() {
     const width = window.innerWidth;
-
     if (width < 768) {
       bgImage.style.filter = 'blur(1px) brightness(0.7)';
       bgImage.style.transform = 'scale(1.15)';
@@ -151,7 +134,7 @@ function initResponsiveBackground() {
     }
   }
 
-  bgImage.style.transition = 'all 0.5s ease';
+  bgImage.style.transition = 'all 5s ease';
   bgImage.style.objectFit = 'cover';
   bgImage.style.width = '100%';
   bgImage.style.height = '100%';
@@ -184,7 +167,6 @@ class ShapeAnimator {
       const color = colors[Math.floor(Math.random() * colors.length)];
 
       shape.className = `shape ${type} ${color} glow`;
-
       const size = Math.random() * 60 + 20;
       const left = Math.random() * 100;
       const top = Math.random() * 100;
@@ -202,8 +184,8 @@ class ShapeAnimator {
       `;
 
       if (type === 'triangle') {
-        shape.style.borderLeftWidth = `${size/2}px`;
-        shape.style.borderRightWidth = `${size/2}px`;
+        shape.style.borderLeftWidth = `${size / 2}px`;
+        shape.style.borderRightWidth = `${size / 2}px`;
         shape.style.borderBottomWidth = `${size}px`;
         shape.style.borderBottomColor = `rgba(255, 255, 255, 0.3)`;
       }
@@ -217,7 +199,6 @@ class ShapeAnimator {
     this.shapes.forEach(shape => {
       const animations = ['float', 'pulse', 'spin'];
       const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
-
       if (randomAnimation === 'spin') {
         shape.style.animation = `spin ${Math.random() * 20 + 10}s linear infinite`;
       } else if (randomAnimation === 'pulse') {
@@ -227,7 +208,48 @@ class ShapeAnimator {
   }
 }
 
-// ================= INITIALIZE =================
+// ================= HERO SLIDESHOW (FADE VERSION) =================
+document.addEventListener('DOMContentLoaded', function() {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  let currentSlide = 0;
+  const totalSlides = slides.length;
+
+  function showSlide(index) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    showSlide(currentSlide);
+  }
+
+  let slideInterval = setInterval(nextSlide, 6000);
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      clearInterval(slideInterval);
+      showSlide(index);
+      currentSlide = index;
+      slideInterval = setInterval(nextSlide, 6000);
+    });
+  });
+
+  // Show first slide immediately
+  showSlide(0);
+});
+
+// ================= ALERT AUTO-DISMISS =================
+setTimeout(() => {
+  document.querySelectorAll('.alert').forEach(alert => {
+    alert.style.transition = 'opacity 0.5s ease';
+    alert.style.opacity = '0';
+    setTimeout(() => alert.remove(), 800);
+  });
+}, 4000);
+
+// ================= INITIALIZATION =================
 window.addEventListener('load', () => {
   initTypingAnimation();
   handleResponsive();
@@ -238,11 +260,8 @@ window.addEventListener('load', () => {
   const modernServicesSection = document.querySelector('.modern-services');
   if (modernServicesSection) {
     modernServicesSection.addEventListener('mouseenter', () => {
-      shapeAnimator.shapes.forEach(shape => {
-        shape.style.animationDuration = '3s';
-      });
+      shapeAnimator.shapes.forEach(shape => (shape.style.animationDuration = '3s'));
     });
-
     modernServicesSection.addEventListener('mouseleave', () => {
       shapeAnimator.shapes.forEach(shape => {
         const duration = Math.random() * 10 + 10;
@@ -253,77 +272,3 @@ window.addEventListener('load', () => {
 });
 
 window.addEventListener('resize', handleResponsive);
-
-
-// Simple counting animation
-function startCountAnimation() {
-    const numbers = document.querySelectorAll('.stats strong');
-    
-    numbers.forEach(number => {
-        const finalValue = parseInt(number.textContent);
-        let current = 0;
-        const duration = 2000; // 2 seconds
-        const increment = finalValue / (duration / 16); // 60fps
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= finalValue) {
-                number.textContent = finalValue + '+';
-                clearInterval(timer);
-            } else {
-                number.textContent = Math.floor(current) + '+';
-            }
-        }, 16);
-    });
-}
-
-// Start when page loads
-window.addEventListener('load', startCountAnimation);
-
-document.addEventListener('DOMContentLoaded', function() {
-  const slideshow = document.querySelector('.hero-slideshow');
-  const slides = document.querySelectorAll('.slide');
-  const dots = document.querySelectorAll('.dot');
-  const totalSlides = slides.length;
-  let currentSlide = 0;
-
-  function showSlide(n) {
-    currentSlide = (n + totalSlides) % totalSlides;
-    const offset = -currentSlide * 100; // Move container left
-    slideshow.style.transform = `translateX(${offset}%)`;
-
-    slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-  }
-
-  function nextSlide() {
-    showSlide(currentSlide + 1);
-  }
-
-  function prevSlide() {
-    showSlide(currentSlide - 1);
-  }
-
-  // Auto slide
-  let slideInterval = setInterval(nextSlide, 6000);
-
-  // Dots navigation (if you have them)
-  dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
-      clearInterval(slideInterval);
-      showSlide(index);
-    });
-  });
-});
-
-
-
- setTimeout(() => {
-    document.querySelectorAll('.alert').forEach(alert => {
-      alert.style.transition = 'opacity 0.5s ease';
-      alert.style.opacity = '0';
-      setTimeout(() => alert.remove(), 800);
-    });
-  }, 4000);
-
-
